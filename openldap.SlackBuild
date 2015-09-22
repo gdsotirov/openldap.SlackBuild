@@ -19,13 +19,13 @@
 # 
 # Visit SlackPack at http://sotirov-bg.net/slackpack/
 #
-# $Id: openldap.SlackBuild,v 1.7 2015/09/22 17:13:20 gsotirov Exp $
+# $Id: openldap.SlackBuild,v 1.8 2015/09/22 19:34:05 gsotirov Exp $
 #
 
 . ../../slack-package.conf
 
 NAME=openldap
-VERSION=2.4.18
+VERSION=2.4.21
 ARCH=${ARCH:-i486}
 BUILD=${BUILD:-1}
 
