@@ -19,7 +19,7 @@
 # 
 # Visit SlackPack at http://sotirov-bg.net/slackpack/
 #
-# $Id: openldap.SlackBuild,v 1.6 2015/09/22 16:57:15 gsotirov Exp $
+# $Id: openldap.SlackBuild,v 1.7 2015/09/22 17:13:20 gsotirov Exp $
 #
 
 . ../../slack-package.conf
@@ -125,9 +125,9 @@ install -m 644 $CWD/$NAME.SlackBuild $SBDIR/$NAME.SlackBuild
 # Create package
 cd $PKG
 PKGNAME=$NAME-$VERSION-$ARCH-$BUILD$MYIN
-makepkg -l y -c n $PKG_DIR/$PKGNAME.tgz
+makepkg -l y -c n $PKG_DIR/$PKGNAME.txz
 ( cd $PKG_DIR
-  md5sum $PKGNAME.tgz > $PKGNAME.tgz.md5
+  md5sum $PKGNAME.txz > $PKGNAME.txz.md5
   cat $PKG/install/slack-desc > $PKG_DIR/$PKGNAME.txt
 )
 
