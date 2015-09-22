@@ -19,7 +19,7 @@
 # 
 # Visit SlackPack at http://sotirov-bg.net/slackpack/
 #
-# $Id: openldap.SlackBuild,v 1.1 2015/09/22 12:41:28 gsotirov Exp $
+# $Id: openldap.SlackBuild,v 1.2 2015/09/22 13:31:40 gsotirov Exp $
 #
 
 . ../slack-package.conf
@@ -81,12 +81,23 @@ CXXFLAGS="$SLCKCFLAGS" \
 # Build & install
 make depend || exit 5
 make -j4 || exit 6
-make test || exit 7
+$DO_TEST || make test || exit 7
 make DESTDIR=$PKG install || exit 8
 
 # Additional installation steps
 install -m 755 -d $PKG/etc/rc.d
-install -m 644 $CWD/rc.slapd.new $PKG/etc/rc.d/rc.slapd.new
+install -m 644 $CWD/rc.slapd $PKG/etc/rc.d/rc.slapd.new
+
+mv $PKG/etc/$NAME/slapd.conf $PKG/etc/$NAME/slapd.conf.new
+mv $PKG/etc/$NAME/ldap.conf  $PKG/etc/$NAME/ldap.conf.new
+cat << EOF >> $PKG/etc/$NAME/ldap.conf.new
+
+# In order to avoid problems with self-signed certificates using TLS:
+# "TLS certificate verification: Error, self signed certificate"
+# See also 'man ldap.conf' or http://www.openldap.org/doc/admin/tls.html
+TLS_REQCERT allow
+
+EOF
 
 # Prepare
 bin_perms $PKG
@@ -96,13 +107,19 @@ gzip_man $PKG
 create_docs $PKG $NAME-$VERSION
 ( cd $PKG; rm -rf usr/doc/$NAME-$VERSION/doc )
 
+mkdir -p $PKG/install
+install -m 644 $CWD/doinst.sh       $PKG/install/doinst.sh
+install -m 644 $CWD/slack-desc      $PKG/install/slack-desc
+install -m 644 $CWD/slack-conflicts $PKG/install/slack-conflicts
+install -m 644 $CWD/slack-required  $PKG/install/slack-required
+
 SBDIR=$PKG/usr/src/slackbuilds/$NAME-$VERSION
 mkdir -p $PKG/usr/src/slackbuilds/$NAME-$VERSION
 install -m 644 $CWD/doinst.sh        $SBDIR/doinst.sh
 install -m 644 $CWD/slack-desc       $SBDIR/slack-desc
 install -m 644 $CWD/slack-required   $SBDIR/slack-required
 install -m 644 $CWD/slack-conflicts  $SBDIR/slack-conflicts
-install -m 644 $CWD/rc.slapd.new     $SBDIR/rc.slapd.new
+install -m 644 $CWD/rc.slapd         $SBDIR/rc.slapd
 install -m 644 $CWD/$NAME.SlackBuild $SBDIR/$NAME.SlackBuild
 
 # Create package
