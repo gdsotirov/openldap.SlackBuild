@@ -3,9 +3,9 @@ openldap:
 openldap: OpenLDAP Software is an open source implementation of the
 openldap: Lightweight Directory Access Protocol.  The suite includes:
 openldap:   * slapd - stand-alone LDAP daemon (server)
-openldap:   * slurpd - stand-alone LDAP update replication daemon
 openldap:   * libraries implementing the LDAP protocol, and
 openldap:   * utilities, tools, and sample clients.
+openldap:
 openldap:
 openldap:
 openldap: Packaged by Georgi D. Sotirov <gdsotirov@dir.bg>
