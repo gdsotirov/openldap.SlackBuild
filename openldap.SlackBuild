@@ -1,0 +1,122 @@
+#!/bin/sh
+# Slackware build script for OpenLDAP
+# Copyright (C) 2015 Georgi D. Sotirov <gdsotirov@dir.bg>
+# Based on the original build script for the client by Patick Volkerding
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+# 
+# Visit SlackPack at http://sotirov-bg.net/slackpack/
+#
+# $Id: openldap.SlackBuild,v 1.1 2015/09/22 12:41:28 gsotirov Exp $
+#
+
+. ../slack-package.conf
+
+NAME=openldap
+VERSION=2.3.27
+ARCH=${ARCH:-i486}
+BUILD=${BUILD:-1}
+
+TMP=${TMP:-/tmp}
+CWD=${CWD:-`pwd`}
+
+if [ ! -e $TMP ]; then
+  mkdir -p $TMP # location to build the source
+fi
+
+SRC=$TMP/$NAME-$VERSION
+if [ -e $SRC -a -d $SRC ]; then
+  echo "Source directory '$SRC' already exists! Plaese, move it or remove it."
+  exit 1
+fi
+
+PKG=$TMP/package-$NAME
+if [ -e $PKG -a -d $PKG ]; then
+  echo "Package creation directory '$PKG' already exists! Please, move it or remove it."
+  exit 2
+fi
+mkdir -p $PKG
+
+# Extract and fix source
+cd $TMP
+tar -xvf $CWD/$NAME-$VERSION.tar.gz || exit 3
+cd $SRC
+fix_source
+
+# Configure
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLCKCFLAGS" \
+./configure --build=$ARCH-slackware-linux \
+            --host=$ARCH-slackware-linux \
+            --prefix=/usr \
+            --sysconfdir=/etc \
+            --localstatedir=/var \
+            --libdir=/usr/lib${LIBDIRSUFFIX} \
+            --mandir=/usr/man \
+            --with-cyrus-sasl \
+            --with-tls \
+            --with-readline \
+            --with-threads \
+            --enable-syslog \
+            --enable-local \
+            --enable-proctitle \
+            --enable-dynamic \
+            --disable-static \
+            --enable-shared \
+            --enable-slapd \
+            --enable-slurpd  || exit 4
+
+# Build & install
+make depend || exit 5
+make -j4 || exit 6
+make test || exit 7
+make DESTDIR=$PKG install || exit 8
+
+# Additional installation steps
+install -m 755 -d $PKG/etc/rc.d
+install -m 644 $CWD/rc.slapd.new $PKG/etc/rc.d/rc.slapd.new
+
+# Prepare
+bin_perms $PKG
+sbin_perms $PKG
+( cd $PKG; strip_bin; strip_lib )
+gzip_man $PKG
+create_docs $PKG $NAME-$VERSION
+( cd $PKG; rm -rf usr/doc/$NAME-$VERSION/doc )
+
+SBDIR=$PKG/usr/src/slackbuilds/$NAME-$VERSION
+mkdir -p $PKG/usr/src/slackbuilds/$NAME-$VERSION
+install -m 644 $CWD/doinst.sh        $SBDIR/doinst.sh
+install -m 644 $CWD/slack-desc       $SBDIR/slack-desc
+install -m 644 $CWD/slack-required   $SBDIR/slack-required
+install -m 644 $CWD/slack-conflicts  $SBDIR/slack-conflicts
+install -m 644 $CWD/rc.slapd.new     $SBDIR/rc.slapd.new
+install -m 644 $CWD/$NAME.SlackBuild $SBDIR/$NAME.SlackBuild
+
+# Create package
+cd $PKG
+PKGNAME=$NAME-$VERSION-$ARCH-$BUILD$MYIN
+makepkg -l y -c n $PKG_DIR/$PKGNAME.tgz
+( cd $PKG_DIR
+  md5sum $PKGNAME.tgz > $PKGNAME.tgz.md5
+  cat $PKG/install/slack-desc > $PKG_DIR/$PKGNAME.txt
+)
+
+# Clean up (optionally)
+if [ "$1" == "--cleanup" ]; then
+   rm -rf $TMP/$NAME-$VERSION
+   rm -rf $TMP/package-$NAME
+fi
+
