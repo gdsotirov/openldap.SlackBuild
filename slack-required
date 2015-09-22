@@ -1,4 +1,8 @@
+cxxlibs >= 6.0.13 | gcc-g++ >= 4.4.4
 cyrus-sasl >= 2.1.23
 db44 >= 4.4.20
-glibc-solibs >= 2.7
-openssl >= 0.9.8k | openssl-solibs >= 0.9.8k
+gcc >= 4.4.4
+glibc-solibs >= 2.11.1
+icu >= 4.6.1
+openssl >= 0.9.8zf | openssl-solibs >= 0.9.8zf
+util-linux-ng >= 2.17.2
