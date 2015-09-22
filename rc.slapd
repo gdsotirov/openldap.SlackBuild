@@ -1,0 +1,98 @@
+#!/bin/sh
+#
+# /etc/rc.d/rc.slapd
+#
+# start/stop/restart/status of the OpenLDAP server.
+#
+# To make OpenLDAP start automatically at boot, make this
+# file executable:  chmod 755 /etc/rc.d/rc.slapd
+#
+# Written by Georgi D. Sotirov <gsotirov@dir.bg>
+# Based on examples from Internet
+
+# Bash colors
+C_GREEN=$'\e[32;01m'
+C_YELLOW=$'\e[33;01m'
+C_RED=$'\e[31;01m'
+C_NORMAL=$'\e[0m'
+
+SNAME='OpenLDAP server'
+NAME=slapd
+CMD="/usr/libexec/$NAME"
+CMD_OPTS="-f /etc/openldap/$NAME.conf"
+PIDFILE="/var/run/$NAME.pid"
+
+ok() {
+  echo "${C_GREEN}Done${C_NORMAL}"
+}
+
+fail() {
+  echo "${C_RED}Failure${C_NORMAL}"
+}
+
+print_status() {
+  if [ $? != 0 ]; then
+    fail
+  else
+    ok
+  fi
+}
+
+start() {
+  if [ -x $CMD ]; then
+    if [ ! -e $PIDFILE ]; then
+      echo -n "Starting $SNAME in $CMD... "
+      $CMD $CMD_OPTS
+      print_status
+    else
+      echo "Starting $SNAME: Already running with PID `cat $PIDFILE`!"
+    fi
+  fi
+}
+
+stop() {
+  if [ -e $PIDFILE ]; then
+    echo -n "Stopping ${SNAME}... "
+    kill -15 `cat $PIDFILE`
+    print_status
+  else
+    echo "Stopping ${SNAME}: Not running!"
+  fi
+}
+
+restart() {
+  stop
+  sleep 3
+  start
+}
+
+status() {
+  if [ -e $PIDFILE ]; then
+    echo "$SNAME running with PID `cat $PIDFILE`."
+  else
+    STAT=`ps -C $NAME -o pid= | wc -l` 
+    if [ ${STAT} -ge 1 ]; then
+      echo "$SNAME is running"
+    else
+      echo "$SNAME is not running" 
+    fi
+  fi
+}
+
+help() {
+  echo "$SNAME control"
+  echo "Usage: $0 start|stop|restart|status"
+  echo
+}
+
+case "$1" in
+  'start')
+    start ;;
+  'stop')
+    stop ;;
+  'status')
+    status ;;
+  *)
+    help ;;
+esac
+
