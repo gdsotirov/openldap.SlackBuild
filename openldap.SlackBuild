@@ -1,6 +1,6 @@
 #!/bin/sh
 # Slackware build script for OpenLDAP
-# Copyright (C) 2015 Georgi D. Sotirov <gdsotirov@dir.bg>
+# Copyright (C) 2015-2016 Georgi D. Sotirov <gdsotirov@dir.bg>
 # Based on the original build script for the client by Patick Volkerding
 #
 # This program is free software; you can redistribute it and/or
@@ -19,14 +19,14 @@
 # 
 # Visit SlackPack at http://sotirov-bg.net/slackpack/
 #
-# $Id: openldap.SlackBuild,v 1.11 2015/09/22 20:08:34 gsotirov Exp $
+# $Id: openldap.SlackBuild,v 1.12 2016/08/28 14:53:37 gsotirov Exp $
 #
 
 . ../../slack-package.conf
 
 NAME=openldap
-VERSION=2.4.42
-ARCH=${ARCH:-i486}
+VERSION=2.4.44
+ARCH=${ARCH:-i586}
 BUILD=${BUILD:-1}
 
 TMP=${TMP:-/tmp}
@@ -67,7 +67,6 @@ CXXFLAGS="$SLCKCFLAGS" \
             --mandir=/usr/man \
             --with-cyrus-sasl \
             --with-tls \
-            --with-readline \
             --with-threads \
             --enable-syslog \
             --enable-local \
@@ -75,8 +74,7 @@ CXXFLAGS="$SLCKCFLAGS" \
             --enable-dynamic \
             --disable-static \
             --enable-shared \
-            --enable-slapd \
-            --enable-slurpd  || exit 4
+            --enable-slapd || exit 4
 
 # Build & install
 make depend || exit 5
