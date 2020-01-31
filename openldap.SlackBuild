@@ -1,6 +1,6 @@
 #!/bin/sh
 # Slackware build script for OpenLDAP
-# Copyright (C) 2015-2019 Georgi D. Sotirov <gdsotirov@dir.bg>
+# Copyright (C) 2015-2020 Georgi D. Sotirov <gdsotirov@dir.bg>
 # Based on the original build script for the client by Patick Volkerding
 #
 # This program is free software; you can redistribute it and/or
@@ -19,13 +19,13 @@
 # 
 # Visit SlackPack at http://sotirov-bg.net/slackpack/
 #
-# $Id: openldap.SlackBuild,v 1.16 2019/07/27 05:51:24 gsotirov Exp $
+# $Id: openldap.SlackBuild,v 1.17 2020/01/31 09:14:04 gsotirov Exp $
 #
 
 . ../../slack-package.conf
 
 NAME=openldap
-VERSION=2.4.48
+VERSION=2.4.49
 ARCH=${ARCH:-i586}
 BUILD=${BUILD:-1}
 
