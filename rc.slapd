@@ -7,7 +7,7 @@
 # To make OpenLDAP start automatically at boot, make this
 # file executable:  chmod 755 /etc/rc.d/rc.slapd
 #
-# Written by Georgi D. Sotirov <gsotirov@dir.bg>
+# Written by Georgi D. Sotirov <gsotirov@gmail.com>
 # Based on examples from Internet
 
 # Bash colors
